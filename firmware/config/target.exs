@@ -93,3 +93,23 @@ config :mdns_lite,
 # Uncomment to use target specific configurations
 
 # import_config "#{Mix.target()}.exs"
+
+# Phoenix UI configuration for Nerves
+config :ui, UiWeb.Endpoint,
+  http: [ip: {0, 0, 0, 0}, port: 4000],
+  server: true,
+  secret_key_base: "nGY5pp5/24WZpEomazdLekUr3KKSpn6tI/rBBb95E2INqkEuBG/jq4qZHVHJzA0P",
+  check_origin: false
+
+# SQLite database configuration for Nerves
+# /data is a writable directory in Nerves (root filesystem is read-only)
+config :ui, Ui.Repo,
+  database: "/data/ui.db",
+  pool_size: 5
+
+# Disable code reloading in production
+config :ui, UiWeb.Endpoint,
+  code_reloader: false
+
+# Logger configuration
+config :logger, level: :info
