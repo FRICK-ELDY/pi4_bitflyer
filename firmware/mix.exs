@@ -9,7 +9,7 @@ defmodule Firmware.MixProject do
     [
       app: @app,
       version: @version,
-      elixir: "~> 1.17",
+      elixir: "~> 1.19",
       archives: [nerves_bootstrap: "~> 1.14"],
       listeners: listeners(Mix.target(), Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -34,7 +34,7 @@ defmodule Firmware.MixProject do
   defp deps do
     [
       # Dependencies for all targets
-      {:nerves, "~> 1.10", runtime: false},
+      {:nerves, "~> 1.12", runtime: false},
       {:shoehorn, "~> 0.9.1"},
       {:ring_logger, "~> 0.11.0"},
       {:toolshed, "~> 0.4.0"},
@@ -51,7 +51,7 @@ defmodule Firmware.MixProject do
       # bumps to Nerves systems. Since these include Linux kernel and Erlang
       # version updates, please review their release notes in case
       # changes to your application are needed.
-      {:nerves_system_rpi4, "~> 1.24", runtime: false, targets: :rpi4},
+      {:nerves_system_rpi4, "~> 1.33", runtime: false, targets: :rpi4},
       {:ui, path: "../ui", targets: @all_targets, env: Mix.env()}
     ]
   end

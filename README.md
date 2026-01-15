@@ -2,6 +2,14 @@
 
 Raspberry Pi 4 + Nerves + Phoenix + SQLite3 でBitflyerの自動売買システムを構築するプロジェクトです。
 
+## 使用バージョン
+
+- **Erlang/OTP**: 28.1.1
+- **Elixir**: 1.19.0
+- **Phoenix**: 1.8.3
+- **Nerves**: 1.12.0
+- **nerves_system_rpi4**: 1.33.0
+
 ## セットアップ
 
 ### 必要なツール
