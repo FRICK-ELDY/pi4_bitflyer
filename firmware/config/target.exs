@@ -103,6 +103,30 @@ config :mdns_lite,
     }
   ]
 
+# Phoenix UI configuration for Nerves
+config :ui, UiWeb.Endpoint,
+  http: [ip: {0, 0, 0, 0}, port: 4000],
+  server: true,
+  secret_key_base: "9f9RbKbH3eOpCvlGYIJzzulJJL0yRPTMMLLHuC6YvLNfSpadL+nHddoQezVk+qUY",
+  check_origin: false,
+  force_ssl: false
+
+# Disable code reloading in production
+config :ui, UiWeb.Endpoint,
+  code_reloader: false
+
+# Disable DNSCluster for Nerves (not needed in embedded environment)
+config :ui, :dns_cluster_query, :ignore
+
+# Configure Swoosh API Client (use Req instead of Hackney)
+config :swoosh, api_client: Swoosh.ApiClient.Req
+
+# Disable Swoosh Local Memory Storage
+config :swoosh, local: false
+
+# Logger configuration
+config :logger, level: :info
+
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 # Uncomment to use target specific configurations

@@ -186,6 +186,72 @@ mix firmware
 2. `firmware/config/target.exs`でPhoenix設定が追加されているか確認
 3. SSH接続してログを確認: `ssh root@nerves.local` → `RingLogger.attach`
 
+#### エラー: `Plug.Cowboy`が見つからない
+
+**症状**:
+- SSH接続時に`UiWeb.Endpoint is not running`と表示される
+- IExで`Application.ensure_all_started(:ui)`を実行すると、以下のエラーが発生：
+  ```
+  ** (UndefinedFunctionError) function Plug.Cowboy.child_spec/1 is undefined (module Plug.Cowboy is not available)
+  ```
+
+**原因**:
+Phoenix 1.8.3はデフォルトで`Plug.Cowboy`を使用しますが、依存関係に`plug_cowboy`が含まれていない場合に発生します。
+
+**解決方法**:
+
+1. `ui/mix.exs`の`deps/0`関数に`plug_cowboy`を追加：
+
+```elixir
+defp deps do
+  [
+    # ... 既存の依存関係 ...
+    {:bandit, "~> 1.5"},
+    {:plug_cowboy, "~> 2.7"}  # この行を追加
+  ]
+end
+```
+
+2. 依存関係を取得：
+
+```bash
+cd ui
+mix deps.get
+```
+
+3. アセットをデプロイ：
+
+```bash
+cd ui
+mix assets.deploy
+```
+
+4. firmwareディレクトリでも依存関係を取得：
+
+```bash
+cd firmware
+export MIX_TARGET=rpi4
+mix deps.get
+```
+
+5. ファームウェアを再ビルド：
+
+```bash
+cd firmware
+export MIX_TARGET=rpi4
+mix firmware
+```
+
+6. デバイスにアップロード：
+
+```bash
+cd firmware
+export MIX_TARGET=rpi4
+mix upload
+```
+
+アップロード後、デバイスが再起動し、Phoenixが正常に起動します。
+
 ## 次のステップ
 
 プロジェクト間のリンクが完了したら、次は`step_05_databese.md`を参照して、SQLiteデータベースを追加します（オプション）。
