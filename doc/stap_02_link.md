@@ -101,8 +101,18 @@ cd ..
 ```bash
 cd firmware
 export MIX_TARGET=rpi4
+
+# 開発用（デフォルト）
 mix firmware
+
+# または本番用（最適化）
+# export MIX_ENV=prod
+# mix firmware
 ```
+
+**MIX_ENVの違い**:
+- `MIX_ENV=dev`（デフォルト）: 開発用、デバッグ情報あり、ビルドが速い
+- `MIX_ENV=prod`: 本番用、最適化済み、デバッグ情報削除、ビルドが遅い可能性
 
 ビルドが成功すれば、リンクは正常に完了しています。
 

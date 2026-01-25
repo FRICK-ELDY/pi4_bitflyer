@@ -40,11 +40,19 @@ cd ..
 # 2. ファームウェアのビルド
 cd firmware
 export MIX_TARGET=rpi4
+# 開発用（デフォルト）
 mix firmware
+# または本番用（最適化）
+# export MIX_ENV=prod
+# mix firmware
 
 # 3. SDカードへの書き込み
 mix firmware.burn
 ```
+
+**注意**: 
+- `MIX_ENV=dev`（デフォルト）: 開発用、デバッグ情報あり、ビルドが速い
+- `MIX_ENV=prod`: 本番用、最適化済み、デバッグ情報削除、ビルドが遅い可能性
 
 ## 起動と確認
 
