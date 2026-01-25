@@ -28,6 +28,7 @@ pi4_bitflyer/
 1. **必要なツールのインストール**: [`doc/stap_00_assets.md`](./doc/stap_00_assets.md)
 2. **プロジェクトの生成**: [`doc/stap_01_genarate.md`](./doc/stap_01_genarate.md)
 3. **プロジェクト間のリンク**: [`doc/stap_02_link.md`](./doc/stap_02_link.md)
+4. **SQLiteデータベースの追加**（オプション）: [`doc/stap_03_databace.md`](./doc/stap_03_databace.md)
 
 ## ビルドと書き込み
 
