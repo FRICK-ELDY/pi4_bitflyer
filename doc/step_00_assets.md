@@ -21,11 +21,39 @@ asdf plugin add elixir
 asdf install erlang 28.1.1
 asdf install elixir 1.19.0-otp-28
 
-# プロジェクトディレクトリでバージョンを設定
-cd firmware
+# プロジェクトルートでバージョンを設定
+cd pi4_bitflyer
 asdf local erlang 28.1.1
 asdf local elixir 1.19.0-otp-28
 ```
+
+### 1.1. .tool-versionsファイルの設定
+
+プロジェクトルートに`.tool-versions`ファイルを作成することで、asdfが自動的にバージョンを設定します。
+
+プロジェクトルート（`pi4_bitflyer/`）に`.tool-versions`ファイルを作成します：
+
+```bash
+cd pi4_bitflyer
+cat > .tool-versions << EOF
+erlang 28.1.1
+elixir 1.19.0-otp-28
+EOF
+```
+
+`.tool-versions`ファイルの内容：
+
+```
+erlang 28.1.1
+elixir 1.19.0-otp-28
+```
+
+**利点**:
+- プロジェクトディレクトリに入ると自動的に正しいバージョンが使用されます
+- チーム全体で同じバージョンを使用できます
+- バージョン管理が簡単になります
+
+**注意**: `.tool-versions`ファイルが存在する場合、`asdf local`コマンドを実行する必要はありません。ファイルが存在すれば、自動的にバージョンが設定されます。
 
 ### 2. Phoenix アーカイブのインストール
 

@@ -1,11 +1,11 @@
-# Step 03: SQLiteデータベースの追加
+# Step 05: SQLiteデータベースの追加
 
 Phoenixプロジェクトに後からSQLiteデータベースを追加する手順です。
 
 ## 前提条件
 
-- `stap_01_genarate.md`の手順で、`--no-ecto`オプションでPhoenixプロジェクトを作成済みであること
-- `stap_02_link.md`の手順で、firmwareとuiのリンクが完了していること（Nerves環境で使用する場合）
+- `step_03_gen_ui.md`の手順で、`--no-ecto`オプションでPhoenixプロジェクトを作成済みであること
+- `step_04_link.md`の手順で、firmwareとuiのリンクが完了していること（Nerves環境で使用する場合）
 
 ## 手順
 
@@ -110,7 +110,15 @@ config :ui, Ui.Repo,
 
 **重要**: Nerves環境では、ルートファイルシステムは読み取り専用のため、書き込み可能な`/data`ディレクトリにデータベースを配置します。
 
-また、`firmware/config/target.exs`にも同様の設定が必要です（`stap_02_link.md`を参照）。
+また、`firmware/config/target.exs`にも同様の設定を追加します：
+
+```elixir
+# SQLite database configuration for Nerves
+# /data is a writable directory in Nerves (root filesystem is read-only)
+config :ui, Ui.Repo,
+  database: "/data/ui.db",
+  pool_size: 5
+```
 
 ### 6. データベースの作成
 
@@ -238,7 +246,7 @@ pkill -f "mix phx.server"
 **対処法**:
 ```bash
 # NervesデバイスにSSH接続
-ssh nerves.local
+ssh root@nerves.local
 
 # /dataディレクトリの確認
 ls -la /data

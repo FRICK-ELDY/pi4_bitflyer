@@ -1,6 +1,11 @@
-# Step 01: プロジェクト間のリンク
+# Step 04: プロジェクト間のリンク
 
 Ponchoプロジェクト構造では、`firmware`プロジェクトが`ui`プロジェクトを依存関係として参照します。
+
+## 前提条件
+
+- `step_01_gen_firmware.md`の手順で、Nervesファームウェアプロジェクトが生成済みであること
+- `step_03_gen_ui.md`の手順で、Phoenix UIプロジェクトが生成済みであること
 
 ## 手順
 
@@ -12,7 +17,7 @@ Ponchoプロジェクト構造では、`firmware`プロジェクトが`ui`プロ
 defp deps do
   [
     # ... 既存の依存関係 ...
-    {:nerves_system_rpi4, "~> 1.33", runtime: false, targets: :rpi4},
+    {:nerves_system_rpi4, "~> 1.24", runtime: false, targets: :rpi4},
     # UIアプリケーションを依存関係として追加
     {:ui, path: "../ui", targets: @all_targets, env: Mix.env()}
   ]
@@ -41,40 +46,59 @@ end
 
 これにより、Nervesターゲット（Raspberry Pi 4）で起動時にPhoenix UIアプリが自動的に起動します。
 
-### 3. firmware/config/target.exs で Phoenix 設定を追加
+### 3. secret_key_baseの生成
 
-`firmware/config/target.exs`の最後に、Phoenix UI用の設定を追加します：
+Phoenixのセッション暗号化用のキーを生成します：
+
+```bash
+cd ui
+mix phx.gen.secret
+```
+
+このコマンドで生成された文字列をコピーしておきます（次のステップで使用します）。
+
+### 4. firmware/config/target.exs で Phoenix 設定を追加
+
+`firmware/config/target.exs`の最後（`# Import target specific config.`のコメントの前）に、Phoenix UI用の設定を追加します：
 
 ```elixir
 # Phoenix UI configuration for Nerves
 config :ui, UiWeb.Endpoint,
   http: [ip: {0, 0, 0, 0}, port: 4000],
   server: true,
-  secret_key_base: "nGY5pp5/24WZpEomazdLekUr3KKSpn6tI/rBBb95E2INqkEuBG/jq4qZHVHJzA0P",
-  check_origin: false
-
-# SQLite database configuration for Nerves
-# /data is a writable directory in Nerves (root filesystem is read-only)
-config :ui, Ui.Repo,
-  database: "/data/ui.db",
-  pool_size: 5
+  secret_key_base: "ここに生成したsecret_key_baseを貼り付け",
+  check_origin: false,
+  force_ssl: false
 
 # Disable code reloading in production
 config :ui, UiWeb.Endpoint,
   code_reloader: false
 
+# Disable DNSCluster for Nerves (not needed in embedded environment)
+config :ui, :dns_cluster_query, :ignore
+
 # Logger configuration
 config :logger, level: :info
+
+# Import target specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+# Uncomment to use target specific configurations
+
+# import_config "#{Mix.target()}.exs"
 ```
 
 **設定の説明**:
 - `http: [ip: {0, 0, 0, 0}, port: 4000]` - すべてのインターフェースでポート4000をリッスン
 - `server: true` - Phoenixサーバーを起動
-- `secret_key_base` - セッション暗号化用のキー（本番環境では環境変数から取得推奨）
-- `database: "/data/ui.db"` - Nervesの書き込み可能ディレクトリ`/data`にSQLiteデータベースを配置
+- `secret_key_base` - ステップ3で生成したキーを貼り付け（セッション暗号化用）
+- `force_ssl: false` - SSL強制を無効化（Nerves環境ではHTTPを使用）
 - `code_reloader: false` - 本番環境ではコードリロードを無効化
 
-### 4. 依存関係の取得
+**注意**: 
+- `secret_key_base`は機密情報なので、本番環境では環境変数から取得することを推奨します
+- SQLiteを使用する場合は、`step_05_databese.md`の手順を完了してから、SQLite設定を追加してください
+
+### 5. 依存関係の取得
 
 設定が完了したら、依存関係を取得します：
 
@@ -116,6 +140,18 @@ mix firmware
 
 ビルドが成功すれば、リンクは正常に完了しています。
 
+## 起動後の確認
+
+SDカードをRaspberry Pi 4に挿入して起動後、以下でPhoenixにアクセスできます：
+
+```bash
+# mDNS経由
+http://nerves.local:4000
+
+# またはIPアドレス直接指定
+http://<ラズパイのIPアドレス>:4000
+```
+
 ## Ponchoプロジェクト構造の利点
 
 1. **独立性**: `ui`と`firmware`は独立したプロジェクトとして管理可能
@@ -143,6 +179,16 @@ mix deps.clean --all
 mix deps.get
 mix firmware
 ```
+
+### Phoenixが起動しない
+
+1. `firmware/lib/firmware/application.ex`で`{Ui.Application, []}`が追加されているか確認
+2. `firmware/config/target.exs`でPhoenix設定が追加されているか確認
+3. SSH接続してログを確認: `ssh root@nerves.local` → `RingLogger.attach`
+
+## 次のステップ
+
+プロジェクト間のリンクが完了したら、次は`step_05_databese.md`を参照して、SQLiteデータベースを追加します（オプション）。
 
 ## 参考
 
