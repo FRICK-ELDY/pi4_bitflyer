@@ -42,19 +42,34 @@ config :nerves_ssh,
 
 # Configure the network using vintage_net
 #
-# Update regulatory_domain to your 2-letter country code E.g., "US"
+# Update regulatory_domain to your 2-letter country code E.g., "US", "JP"
 #
 # See https://github.com/nerves-networking/vintage_net for more information
 config :vintage_net,
-  regulatory_domain: "00",
+  regulatory_domain: "JP",
   config: [
     {"usb0", %{type: VintageNetDirect}},
-    {"eth0",
+    # WiFi設定（優先）
+    {"wlan0",
      %{
-       type: VintageNetEthernet,
+       type: VintageNetWiFi,
+       vintage_net_wifi: %{
+         networks: [
+           %{
+             ssid: System.get_env("WIFI_SSID") || raise("WIFI_SSID environment variable is not set"),
+             key_mgmt: :wpa_psk,
+             psk: System.get_env("WIFI_PASSWORD") || raise("WIFI_PASSWORD environment variable is not set")
+           }
+         ]
+       },
        ipv4: %{method: :dhcp}
      }},
-    {"wlan0", %{type: VintageNetWiFi}}
+    # 有線LANは無効化（コメントアウト）
+    # {"eth0",
+    #  %{
+    #    type: VintageNetEthernet,
+    #    ipv4: %{method: :dhcp}
+    #  }}
   ]
 
 config :mdns_lite,

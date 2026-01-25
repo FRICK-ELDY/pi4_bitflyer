@@ -5,6 +5,24 @@
 # this project.
 import Config
 
+# Load environment variables from .env file if it exists
+env_file = Path.join([__DIR__, "..", ".env"])
+if File.exists?(env_file) do
+  File.stream!(env_file)
+  |> Stream.filter(fn line ->
+    trimmed = String.trim(line)
+    trimmed != "" and not String.starts_with?(trimmed, "#")
+  end)
+  |> Enum.each(fn line ->
+    case String.split(line, "=", parts: 2) do
+      [key, value] ->
+        System.put_env(String.trim(key), String.trim(value))
+      _ ->
+        :ok
+    end
+  end)
+end
+
 # Enable the Nerves integration with Mix
 Application.start(:nerves_bootstrap)
 
