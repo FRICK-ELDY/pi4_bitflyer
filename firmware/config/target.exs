@@ -64,12 +64,12 @@ config :vintage_net,
        },
        ipv4: %{method: :dhcp}
      }},
-    # 有線LANは無効化（コメントアウト）
-    # {"eth0",
-    #  %{
-    #    type: VintageNetEthernet,
-    #    ipv4: %{method: :dhcp}
-    #  }}
+    # 有線LAN設定
+    {"eth0",
+     %{
+       type: VintageNetEthernet,
+       ipv4: %{method: :dhcp}
+     }}
   ]
 
 config :mdns_lite,

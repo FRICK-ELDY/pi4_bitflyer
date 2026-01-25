@@ -141,6 +141,58 @@ VintageNet.get(["wlan0", "connection"])
 
 現在の設定では、WiFiが優先されます。有線LANも使用したい場合は、`target.exs`の有線LAN設定のコメントを外してください。
 
+#### 有線LAN（eth0）の有効化
+
+有線LANからもアクセスできるようにするには、`firmware/config/target.exs`で有線LAN設定のコメントを外します：
+
+```elixir
+config :vintage_net,
+  regulatory_domain: "JP",
+  config: [
+    {"usb0", %{type: VintageNetDirect}},
+    # WiFi設定（優先）
+    {"wlan0",
+     %{
+       type: VintageNetWiFi,
+       vintage_net_wifi: %{
+         networks: [
+           %{
+             ssid: System.get_env("WIFI_SSID") || raise("WIFI_SSID environment variable is not set"),
+             key_mgmt: :wpa_psk,
+             psk: System.get_env("WIFI_PASSWORD") || raise("WIFI_PASSWORD environment variable is not set")
+           }
+         ]
+       },
+       ipv4: %{method: :dhcp}
+     }},
+    # 有線LAN設定（コメントを外して有効化）
+    {"eth0",
+     %{
+       type: VintageNetEthernet,
+       ipv4: %{method: :dhcp}
+     }}
+  ]
+```
+
+設定を変更したら、ファームウェアを再ビルドしてアップロードしてください：
+
+```bash
+cd firmware
+export MIX_TARGET=rpi4
+mix firmware
+mix upload  # または mix firmware.burn
+```
+
+有線LANとWiFiの両方が有効になると、どちらからでもアクセスできます：
+- WiFi経由: `http://nerves.local:4000` または WiFiのIPアドレス
+- 有線LAN経由: `http://nerves.local:4000` または 有線LANのIPアドレス
+
+有線LANのIPアドレスを確認するには、SSH接続後に以下を実行：
+```bash
+ssh root@nerves.local
+VintageNet.get_by_name("eth0")
+```
+
 ## 次のステップ
 
 WiFi設定が完了したら、次は`step_03_gen_ui.md`を参照して、Phoenix UIプロジェクトを生成します。
