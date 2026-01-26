@@ -8,7 +8,8 @@
 import Config
 
 config :ui,
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  ecto_repos: [Ui.Repo]
 
 # Configure the endpoint
 config :ui, UiWeb.Endpoint,

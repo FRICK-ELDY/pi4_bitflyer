@@ -26,3 +26,10 @@ config :phoenix_live_view,
 # Sort query params output of verified routes for robust url comparisons
 config :phoenix,
   sort_verified_routes_query_params: true
+
+# SQLite database configuration for test
+# WAL mode enables multiple readers and one writer simultaneously
+config :ui, Ui.Repo,
+  database: Path.expand("../priv/repo/ui_test.db", __DIR__),
+  pool_size: 2,
+  journal_mode: :wal

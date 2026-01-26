@@ -28,3 +28,11 @@ config :logger, level: :info
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
+
+# SQLite database configuration for production
+# WAL mode enables multiple readers and one writer simultaneously
+# This is important for BitFlyer auto-trading where multiple cryptocurrency prices are written frequently
+config :ui, Ui.Repo,
+  database: "/data/ui.db",
+  pool_size: 3,
+  journal_mode: :wal

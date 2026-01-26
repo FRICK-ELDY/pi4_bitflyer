@@ -63,7 +63,8 @@ defmodule Ui.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
-      {:plug_cowboy, "~> 2.7"}
+      {:plug_cowboy, "~> 2.7"},
+      {:ecto_sqlite3, "~> 0.11.0"}
     ]
   end
 

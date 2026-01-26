@@ -99,4 +99,18 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Req
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  # SQLite database path can be overridden via environment variable
+  # This allows testing prod config in development environment
+  # Default to /data/ui.db for Nerves, but can be overridden for local testing
+  database_path = System.get_env("DATABASE_PATH") || "/data/ui.db"
+  
+  # Override database configuration if DATABASE_PATH is set
+  # This allows testing prod config in development environment
+  if System.get_env("DATABASE_PATH") do
+    config :ui, Ui.Repo,
+      database: database_path,
+      pool_size: 3,
+      journal_mode: :wal
+  end
 end

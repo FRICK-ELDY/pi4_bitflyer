@@ -8,6 +8,8 @@ defmodule Ui.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      # Start the Repo
+      Ui.Repo,
       UiWeb.Telemetry,
       {DNSCluster, query: Application.get_env(:ui, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Ui.PubSub},

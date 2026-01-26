@@ -80,3 +80,10 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# SQLite database configuration for development
+# WAL mode enables multiple readers and one writer simultaneously
+config :ui, Ui.Repo,
+  database: Path.expand("../priv/repo/ui_dev.db", __DIR__),
+  pool_size: 3,
+  journal_mode: :wal

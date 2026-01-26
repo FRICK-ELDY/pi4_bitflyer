@@ -127,6 +127,15 @@ config :swoosh, local: false
 # Logger configuration
 config :logger, level: :info
 
+# SQLite database configuration for Nerves
+# /data is a writable directory in Nerves (root filesystem is read-only)
+# WAL mode enables multiple readers and one writer simultaneously
+# This is important for BitFlyer auto-trading where multiple cryptocurrency prices are written frequently
+config :ui, Ui.Repo,
+  database: "/data/ui.db",
+  pool_size: 3,
+  journal_mode: :wal
+
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 # Uncomment to use target specific configurations
