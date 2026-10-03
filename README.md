@@ -88,3 +88,5 @@ ssh nerves-<4桁のシリアル番号>.local
 - `ui/` - Phoenix Webアプリケーション
 
 PhoenixアプリはNerves起動時に自動的に起動し、ポート4000でWebサーバーが動作します。
+
+Cloudflare DDNS（`vpn.frick-eldy.com` など）は `Firmware.DdnsUpdater` が常駐し、グローバル IP の変化を検知して A レコードを更新します。設定は [`doc/step_07_ddns.md`](./doc/step_07_ddns.md) を参照してください。
