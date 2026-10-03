@@ -130,11 +130,23 @@ config :logger, level: :info
 # SQLite database configuration for Nerves
 # /data is a writable directory in Nerves (root filesystem is read-only)
 # WAL mode enables multiple readers and one writer simultaneously
-# This is important for BitFlyer auto-trading where multiple cryptocurrency prices are written frequently
 config :ui, Ui.Repo,
   database: "/data/ui.db",
   pool_size: 3,
   journal_mode: :wal
+
+# Cloudflare DDNS（ビルド時に firmware/.env から取り込む）
+config :firmware, Firmware.DdnsUpdater,
+  api_token:
+    System.get_env("CF_API_TOKEN") ||
+      raise("CF_API_TOKEN environment variable is not set"),
+  zone_name:
+    System.get_env("CF_ZONE_NAME") ||
+      raise("CF_ZONE_NAME environment variable is not set"),
+  record_name:
+    System.get_env("CF_RECORD_NAME") ||
+      raise("CF_RECORD_NAME environment variable is not set"),
+  interval_sec: String.to_integer(System.get_env("DDNS_INTERVAL_SEC") || "300")
 
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
